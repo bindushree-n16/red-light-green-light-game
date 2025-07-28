@@ -1,0 +1,59 @@
+import tkinter as tk
+import random
+import time
+
+# Initial setup
+goal = 10
+position = 0
+light_color = "Red"
+game_running = True
+
+# Create main window
+window = tk.Tk()
+window.title("Red Light Green Light - Squid Game")
+window.geometry("400x300")
+window.config(bg="black")
+
+# Labels
+light_label = tk.Label(window, text="WAITING...", font=("Helvetica", 24), fg="white", bg="black")
+light_label.pack(pady=20)
+
+position_label = tk.Label(window, text="Position: 0/10", font=("Helvetica", 18), fg="white", bg="black")
+position_label.pack(pady=10)
+
+status_label = tk.Label(window, text="", font=("Helvetica", 18), fg="yellow", bg="black")
+status_label.pack(pady=10)
+
+# Function to change light
+def change_light():
+    global light_color
+    light_color = random.choice(["Red", "Green"])
+    light_label.config(text=f"{light_color} Light", fg="red" if light_color == "Red" else "lime")
+    window.after(random.randint(1500, 3000), change_light)  # change every 1.5–3 sec
+
+# Function when player clicks Move
+def move_player():
+    global position, light_color, game_running
+    if not game_running:
+        return
+
+    if light_color == "Green":
+        position += 1
+        position_label.config(text=f"Position: {position}/10")
+        status_label.config(text="✅ Safe Move!", fg="lightgreen")
+        if position >= goal:
+            status_label.config(text="🎉 You Won the Game!", fg="cyan")
+            game_running = False
+    else:
+        status_label.config(text="💀 Eliminated! You moved on RED!", fg="red")
+        game_running = False
+
+# Move Button
+move_button = tk.Button(window, text="MOVE", font=("Helvetica", 20), bg="white", fg="black", command=move_player)
+move_button.pack(pady=30)
+
+# Start the light change loop
+change_light()
+
+# Run the game
+window.mainloop()
